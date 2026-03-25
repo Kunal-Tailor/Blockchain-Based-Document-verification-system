@@ -1,11 +1,11 @@
 //Your IPFS api key in ifura.io
-const projectId = "28LuNAotbXzcvtpOcE9F8ayKOeP";
+const projectId = "cd05449883ae476cb768df50f83f99f8";
 //Your api secret in ifura.io
-const projectSecret = "3de3d9c099c6c0c168e39b8bc03e2f7a";
+const projectSecret = "ToHvPoCd8oCd9rQikG6Z84NjlFifOV7mZd3KJg2ct+bP47bkh8eL9w";
 window.CONTRACT = {
-  address: "Contarct Address after deploying it via Remix Online IDE",
-  network: "Example : https://polygon-rpc.com/",
-  explore: "Example : https://polygonscan.com/",
+  address: "0x660f9554030F83cF0654bcEd197f3a37E67c6672",
+  network: "https://rpc.sepolia.org/",
+  explore: "https://sepolia.etherscan.io/",
   // Your Contract ABI
   abi: [
     {
@@ -546,33 +546,59 @@ async function getFilebinInfo(filebinUrl, filebinId) {
   }
 }
 
+// async function uploadFileToIpfs() {
+//   const fileInput = document.getElementById("doc-file"); // Assuming you have an input element with id 'doc-file' for selecting files
+//   const file = fileInput.files[0];
+//   const formData = new FormData();
+//   formData.append("file", file);
+
+//   //for authinticating your request to infura.io
+//   const auth = "Basic " + btoa(`${projectId}:${projectSecret}`);
+
+//   try {
+//     //make post request to upload the file and get the CID
+//     const response = await fetch("https://ipfs.infura.io:5001/api/v0/add", {
+//       method: "POST",
+//       body: formData,
+//       headers: {
+//         Authorization: auth,
+//       },
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("File upload failed");
+//     }
+
+//     const data = await response.json();
+//     console.log(data["Hash"]); // Response data
+//     //return the CID to the addDocHash to store it in the Contract
+//     return data["Hash"];
+//   } catch (error) {
+//     console.error("Error uploading file:", error);
+//     throw error;
+//   }
+// }
+
 async function uploadFileToIpfs() {
-  const fileInput = document.getElementById("doc-file"); // Assuming you have an input element with id 'doc-file' for selecting files
+  const fileInput = document.getElementById("doc-file");
   const file = fileInput.files[0];
+
   const formData = new FormData();
   formData.append("file", file);
 
-  //for authinticating your request to infura.io
-  const auth = "Basic " + btoa(`${projectId}:${projectSecret}`);
-
   try {
-    //make post request to upload the file and get the CID
-    const response = await fetch("https://ipfs.infura.io:5001/api/v0/add", {
+    const response = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
       method: "POST",
-      body: formData,
       headers: {
-        Authorization: auth,
+        pinata_api_key: "658f5ee41ae2e4e5709c",
+        pinata_secret_api_key: "110a82bb0795fe1e949878b02bc1f7b52403607b0502f92f0c1e34ce74bafa74",
       },
+      body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error("File upload failed");
-    }
-
     const data = await response.json();
-    console.log(data["Hash"]); // Response data
-    //return the CID to the addDocHash to store it in the Contract
-    return data["Hash"];
+    return data.IpfsHash;
+
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
